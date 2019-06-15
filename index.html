@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Vue Firebase Authentication</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+      
+        <script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-auth.js"></script>
+        <script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+   
+        <div id="app">
+            <div class="container">
+                <div class="row col s1 center-align">
+                    
+                    <h1>Vue Firebase Authentication</h1>
+                    <h5 style="color: red">{{ error}}</h5>
+                    <div v-if="authUser">
+                    <h3>Signed in as {{ authUser.email }}</h3>
+                    <br>
+                    <button @click="signOut"
+                           >Sign Out</button>
+                    </div>
+
+                   
+                    <button v-else class="btn-floating btn-large cyan pulse waves-effect waves-light modal-trigger"  href="#modal1"><i class="material-icons">menu</i></button>
+                    <button v-if="!authUser" class="btn-floating btn-large orange pulse waves-effect waves-light modal-trigger"  href="#modal2"><i class="material-icons">menu</i></button>
+                    
+                    <div id="modal1" class="modal">
+                      <div class="modal-content">
+                        <h4>Register to find out the meaning of life</h4>
+                        
+                              <div class="row" style="margin: 0 !important">
+                                    <form @submit.prevent="register">
+                                      <div class="row">
+                                        <div class="input-field col s12">
+                                          <input  id="first_name" 
+                                                  type="text" 
+                                                  class="validate"
+                                                  v-model="name">
+                                          <label for="first_name"> First Name</label>
+                                        </div>
+                                      </div>
+
+
+                                      <div class="row">
+                                            <div class="input-field col s12">
+                                              <input id="email" 
+                                                     type="email" 
+                                                     class="validate"
+                                                     v-model="email">
+                                              <label for="email">Email</label>
+                                            </div>
+                                        </div>
+
+
+                                      <div class="row">
+                                        <div class="input-field col s12">
+                                          <input id="password" 
+                                                 type="password" 
+                                                 class="validate"
+                                                 v-model="password">
+                                          <label for="password">Password</label>
+                                        </div>
+                                      </div>
+                                      <h5 style="color: red">{{ infoWrong }}</h5>
+                                      <button class="btn waves-effect waves-light orange modal-close " 
+                                             
+                                              
+                                              >Submit
+                                            <i class="material-icons right">send</i>
+                                          </button>
+                                        </form>
+                                   
+                                
+                            </div>
+                            <!-- <div class="modal-footer">
+                              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                            </div> -->
+                        </div>
+                        </div>
+
+
+                        <div id="modal2" class="modal">
+                          <div class="modal-content">
+                            <h4>Sign in</h4>
+                            
+                                  <div class="row" style="margin: 0 !important">
+                                        <form @submit.prevent="signIn">
+    
+                                          <div class="row">
+                                                <div class="input-field col s12">
+                                                  <input id="email2" 
+                                                         type="email" 
+                                                         class="validate"
+                                                         v-model="email">
+                                                  <label for="email">Email</label>
+                                                </div>
+                                            </div>
+    
+    
+                                          <div class="row">
+                                            <div class="input-field col s12">
+                                              <input id="password2" 
+                                                     type="password" 
+                                                     class="validate"
+                                                     v-model="password">
+                                              <label for="password">Password</label>
+                                            </div>
+                                          </div>
+                                          <h5 style="color: red">{{ infoWrong }}</h5>
+                                          <button class="btn waves-effect waves-light blue modal-close " 
+                                                 
+                                                  
+                                                  >Submit
+                                                <i class="material-icons right">send</i>
+                                              </button>
+                                            </form>
+                                       
+                                    
+                                </div>
+                                <!-- <div class="modal-footer">
+                                  <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                                </div> -->
+                            </div>
+                            </div>
+
+                      </div></div>
+        </div>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="main.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+<script>
+
+// --------------------------------------------------------------------
+//  We can store these data in variables and reference them later in the code
+// const auth = firebase.auth();
+// const db = firebase.firestore();
+
+// // -----------------------------------------------------------------
+
+// // update firestore settings
+// db.settings({timestampsInSnapshots: true});
+// Your web app's Firebase configuration
+
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBxGlJJJ4WU-cSsEZ19ca9QKClm4SS-Nl0",
+    authDomain: "vue-authentication-bae0c.firebaseapp.com",
+    databaseURL: "https://vue-authentication-bae0c.firebaseio.com",
+    projectId: "vue-authentication-bae0c",
+    storageBucket: "vue-authentication-bae0c.appspot.com",
+    messagingSenderId: "753169851664",
+    appId: "1:753169851664:web:b89e003c03c6a07c"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+new Vue({
+    el: '#app',
+    data: {
+      email: '',
+      password: '',
+      authUser: null,
+      infoWrong: '',
+      name: '',
+      error: ''
+    },
+    methods: {
+      register () {
+        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        .then(() => colsole.log('all good'))
+        .catch(error => this.error = error.message)
+
+        firebase.auth().onAuthStateChanged(user => { this.email = '' })
+        firebase.auth().onAuthStateChanged(user => { this.password = '' })
+      },
+      signOut () {
+        firebase.auth().signOut()
+      },
+    //   reset() {
+    //       let mmm = document.querySelector('#submitForm')
+    //       mmm.reset()
+    //   }
+      signIn () {
+        firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then(() => console.log('all good'))
+        .catch(error => this.error = error.message)
+      },
+    //   checkIfError() {
+    //         if(this.email == '' && this.password== '') {
+    //             console.log('Wrong data provided')
+    //             this.infoWrong = 'You cannot submit an empty form'
+    //         } else {
+    //             this.infoWrong = ''  
+    //         }
+    //     }
+    },
+    created () {
+      firebase.auth().onAuthStateChanged(user => { this.authUser = user })
+      // firebase.auth().onAuthStateChanged(user => { this.password = '' })
+      // firebase.auth().onAuthStateChanged(user => { this.email = '' })
+      
+    }
+  })
+
+
+
+</script>
+
+</body>
+</html>
