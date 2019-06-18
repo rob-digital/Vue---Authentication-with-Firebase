@@ -13,8 +13,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
       
-        <script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-auth.js"></script>
+ 
         <script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
         <link rel="stylesheet" href="main.css">
     </head>
@@ -36,7 +35,7 @@
                    
                     <button v-else class="btn-floating btn-large cyan pulse waves-effect waves-light modal-trigger"  href="#modal1"><i class="material-icons">menu</i></button>
                     <button v-if="!authUser" class="btn-floating btn-large orange pulse waves-effect waves-light modal-trigger"  href="#modal2"><i class="material-icons">menu</i></button>
-                    
+                    <button @click="signInWithGoogle">Sign in with Google</button>
                     <div id="modal1" class="modal">
                       <div class="modal-content">
                         <h4>Register to find out the meaning of life</h4>
@@ -81,6 +80,9 @@
                                               >Submit
                                             <i class="material-icons right">send</i>
                                           </button>
+                                          <br/>
+                                          <h2>or</h2>
+                                          
                                         </form>
                                    
                                 
@@ -139,7 +141,8 @@
                       </div></div>
         </div>
 <!-- The core Firebase JS SDK is always required and must be listed first -->
-
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-auth.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="main.js"></script>
 
@@ -203,6 +206,12 @@ new Vue({
         .then(() => console.log('all good'))
         .catch(error => this.error = error.message)
       },
+      signInWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider()
+        firebase.auth().signInWithPopup(provider)
+        .then(data => console.log('Success'))
+        .catch(error => this.error = error.message)
+      }
     //   checkIfError() {
     //         if(this.email == '' && this.password== '') {
     //             console.log('Wrong data provided')
