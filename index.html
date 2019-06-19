@@ -35,7 +35,7 @@
                    
                     <button v-else class="btn-floating btn-large cyan pulse waves-effect waves-light modal-trigger"  href="#modal1"><i class="material-icons">menu</i></button>
                     <button v-if="!authUser" class="btn-floating btn-large orange pulse waves-effect waves-light modal-trigger"  href="#modal2"><i class="material-icons">menu</i></button>
-                    <button @click="signInWithGoogle">Sign in with Google</button>
+                    
                     <div id="modal1" class="modal">
                       <div class="modal-content">
                         <h4>Register to find out the meaning of life</h4>
@@ -81,8 +81,8 @@
                                             <i class="material-icons right">send</i>
                                           </button>
                                           <br/>
-                                          <h2>or</h2>
-                                          
+                                          <h3>or</h3>
+                                          <img src="assets/buttonG.png" @click="signInWithGoogle" class=" modal-close ">
                                         </form>
                                    
                                 
