@@ -23,17 +23,54 @@
             <div class="container">
                 <div class="row col s1 center-align">
                     
-                    <h1>Vue Firebase Authentication</h1>
-                    <h5 style="color: red">{{ error}}</h5>
-                    <div v-if="authUser">
-                    <h3>Signed in as {{ authUser.email }}</h3>
-                    <br>
-                    <button @click="signOut"
-                           >Sign Out</button>
-                    </div>
+                    <h1 v-if="!authUser">Vue Firebase Authentication</h1>
+                    <h5 style="color: red">{{ error }}</h5>
 
-                   
-                    <button v-else class="btn-floating btn-large cyan pulse waves-effect waves-light modal-trigger"  href="#modal1"><i class="material-icons">menu</i></button>
+                    <div v-if="authUser" style="margin-top: 5%" >
+                          <h4 style="margin-bottom: 10%">Signed in as {{ authUser.email }}</h4>
+                          <div style=" border: medium solid cadetblue; display:block; padding: 5% 0 5% 0; overflow: auto ">
+                                <div id="left" style="display: inline-block; width: 30%; float: left;   ">
+                                <img v-if="authUser.photoURL" :src="authUser.photoURL" height="150" > 
+                                <i v-if="!authUser.photoURL" class="material-icons prefix large">account_circle</i>
+                                <p>Welcome {{ authUser.displayName || "my friend" }}</p>
+                                <br>
+                                <button @click="signOut"
+                                        class="waves-effect waves-green grey lighten-2 btn-flat"
+                                      >Sign Out</button>
+                                </div>
+                                <form @submit.prevent="storeMessage">
+                                <div id="right" style="display: inline-block; width: 70%;  padding: 0 5% 0 5%; float: right;  ">
+                                 <h5 style="margin-top: -2%">What is the most important thing in life for you?</h5>
+                                        <div class="input-field col s12" style="margin-top: 5%">
+                                          <i class="material-icons prefix">mode_edit</i>
+                                          <textarea id="icon_prefix2" class="materialize-textarea" v-model="messageText"></textarea>
+                                          <label for="icon_prefix2">The most important for me is ...</label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <i class="material-icons prefix">insert_emoticon</i>
+                                          <textarea id="textarea1" class="materialize-textarea" v-model="nickname"></textarea>
+                                          <label for="textarea1">Your Nickname</label>
+                                        </div>
+                                       
+                                            <button class="right waves-effect waves-green lime accent-4 btn-flat btnSubmitThoughts" >Submit</button>
+                                          </div>
+                                         </form>
+                                </div>
+                              
+
+                        
+                        <br/>
+                        <div v-for="message in messages" class="card">
+                            <div class="card-content">
+                              <p>{{ message.text }}</p>
+                            </div>
+                            <div class="card-content blue-grey lighten-4">
+                              <p class="right" id="test4"><b>User: {{ message.nickname }}</b></p><br/>
+                            </div>
+                          </div>
+                        </div>
+                        
+                    <button v-if="!authUser" class="btn-floating btn-large cyan pulse waves-effect waves-light modal-trigger"  href="#modal1"><i class="material-icons">menu</i></button>
                     <button v-if="!authUser" class="btn-floating btn-large orange pulse waves-effect waves-light modal-trigger"  href="#modal2"><i class="material-icons">menu</i></button>
                     
                     <div id="modal1" class="modal">
@@ -92,7 +129,7 @@
                             </div> -->
                         </div>
                         </div>
-
+                     
 
                         <div id="modal2" class="modal">
                           <div class="modal-content">
@@ -141,8 +178,9 @@
                       </div></div>
         </div>
 <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-database.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="main.js"></script>
 
@@ -163,17 +201,21 @@
 // Your web app's Firebase configuration
 
 
-var firebaseConfig = {
-    apiKey: "AIzaSyBxGlJJJ4WU-cSsEZ19ca9QKClm4SS-Nl0",
-    authDomain: "vue-authentication-bae0c.firebaseapp.com",
-    databaseURL: "https://vue-authentication-bae0c.firebaseio.com",
-    projectId: "vue-authentication-bae0c",
-    storageBucket: "vue-authentication-bae0c.appspot.com",
-    messagingSenderId: "753169851664",
-    appId: "1:753169851664:web:b89e003c03c6a07c"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const firebaseConfig = {
+    apiKey: "AIzaSyBg5xYJXnK3-m0oeklVoSkrA5pZ_76ht3k",
+    authDomain: "fancy-firebase-auth-with-vue.firebaseapp.com",
+    databaseURL: "https://fancy-firebase-auth-with-vue.firebaseio.com",
+    projectId: "fancy-firebase-auth-with-vue",
+    storageBucket: "fancy-firebase-auth-with-vue.appspot.com",
+    messagingSenderId: "560035473809",
+    appId: "1:560035473809:web:6abe2d187b2f5454"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  
+  
 
 new Vue({
     el: '#app',
@@ -183,12 +225,15 @@ new Vue({
       authUser: null,
       infoWrong: '',
       name: '',
-      error: ''
+      error: '',
+      messages:[],
+      messageText: '',
+      nickname: ''
     },
     methods: {
       register () {
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => colsole.log('all good'))
+        .then(() => console.log('all good'))
         .catch(error => this.error = error.message)
 
         firebase.auth().onAuthStateChanged(user => { this.email = '' })
@@ -211,6 +256,14 @@ new Vue({
         firebase.auth().signInWithPopup(provider)
         .then(data => console.log('Success'))
         .catch(error => this.error = error.message)
+       
+      },
+
+      storeMessage() {
+        
+        database.ref('most_important').push({text: this.messageText, nickname: this.nickname})
+        this.messageText = ''
+        this.nickname = ''
       }
     //   checkIfError() {
     //         if(this.email == '' && this.password== '') {
@@ -225,6 +278,8 @@ new Vue({
       firebase.auth().onAuthStateChanged(user => { this.authUser = user })
       // firebase.auth().onAuthStateChanged(user => { this.password = '' })
       // firebase.auth().onAuthStateChanged(user => { this.email = '' })
+      database.ref('most_important').on('child_added',  snapshot => this.messages.push(snapshot.val()))
+     
       
     }
   })
